@@ -17,7 +17,7 @@ export default function App() {
   const [level, setLevel] = useState(null);
   const [operator, setOperator] = useState(null);
   const [math, setMath] = useState(null);
-  const [question, setQuestion] = useState(null);
+  const [question, setQuestion] = useState(1);
   const [point, setPoint] = useState(0);
   const [num1, setNum1] = useState(0);
   const [num2, setNum2] = useState(0);
@@ -25,6 +25,7 @@ export default function App() {
   const [resultUser, setResultUser] = useState("");
 
   const newNumberEasy = () => Math.floor(Math.random() * 18) - 9;
+
   const newNumberFit = () =>
     Math.random() < 0.5
       ? Math.floor(Math.random() * 20) + 10
@@ -35,8 +36,18 @@ export default function App() {
     setNum2(num2);
   };
 
+  const handleLevel = (level) => {
+    setStep(1);
+    setLevel(level);
+  };
+
+  const handleOperator = (option) => {
+    setStep(2);
+    setOperator(option);
+  };
+
   const getRandomDivision = () => {
-    if (level === Levels.Dễ) {
+    if (level === Levels.Easy) {
       const tempNum1 = newNumberEasy();
       const tempNum2 =
         Math.random() < 0.5
@@ -46,7 +57,7 @@ export default function App() {
       return { tempNum1, tempNum2, result };
     }
 
-    if (level === Levels.Vừa) {
+    if (level === Levels.Medium) {
       const tempNum1 = newNumberEasy();
       const tempNum2 =
         Math.random() < 0.5
@@ -57,10 +68,17 @@ export default function App() {
     }
   };
 
+  const handleSubmit = () => {
+    if (result === Number(resultUser)) {
+      setQuestion(question + 1);
+      setPoint(point + 1);
+    }
+  };
+
   useEffect(() => {
     switch (level) {
-      case Levels.Dễ:
-        if (operator === Options["Cộng Trừ"]) {
+      case Levels.Easy:
+        if (operator === Options["Plus or minus"]) {
           const tempMath = Math.random() < 0.5 ? "+" : "-";
           const tempNum1 = newNumberEasy();
           const tempNum2 = newNumberEasy();
@@ -73,7 +91,7 @@ export default function App() {
           }
         }
 
-        if (operator === Options["Nhân Chia"]) {
+        if (operator === Options.Multiplication) {
           const tempMath = Math.random() < 0.5 ? "x" : "÷";
           setMath(tempMath);
           if (tempMath === "x") {
@@ -89,7 +107,7 @@ export default function App() {
           }
         }
 
-        if (operator === Options["Luỹ Thừa"]) {
+        if (operator === Options.Power) {
           const tempNum1 =
             Math.random() < 0.5
               ? Math.floor(Math.random() * 8) + 1
@@ -100,7 +118,7 @@ export default function App() {
           setResult(tempNum1 ** 2);
         }
 
-        if (operator === Options["Tổng Hợp"]) {
+        if (operator === Options.Random) {
           const tempMath = Operators[Math.floor(Math.random() * 5)];
           const tempNum1 = newNumberEasy();
           const tempNum2 = newNumberEasy();
@@ -134,8 +152,8 @@ export default function App() {
           }
         }
         break;
-      case Levels.Vừa:
-        if (operator === Options["Cộng Trừ"]) {
+      case Levels.Medium:
+        if (operator === Options["Plus or minus"]) {
           const tempMath = Math.random() < 0.5 ? "+" : "-";
           const tempNum1 = newNumberFit();
           const tempNum2 = newNumberEasy();
@@ -148,7 +166,7 @@ export default function App() {
           }
         }
 
-        if (operator === Options["Nhân Chia"]) {
+        if (operator === Options.Multiplication) {
           const tempMath = Math.random() < 0.5 ? "x" : "÷";
           setMath(tempMath);
           if (tempMath === "x") {
@@ -164,7 +182,7 @@ export default function App() {
           }
         }
 
-        if (operator === Options["Luỹ Thừa"]) {
+        if (operator === Options.Power) {
           const tempNum1 = newNumberFit();
           setNum1(tempNum1);
           setNum2(2);
@@ -172,7 +190,7 @@ export default function App() {
           setResult(tempNum1 ** 2);
         }
 
-        if (operator === Options["Tổng Hợp"]) {
+        if (operator === Options.Random) {
           const tempMath = Operators[Math.floor(Math.random() * 5)];
           const tempNum1 = newNumberFit();
           const tempNum2 = newNumberEasy();
@@ -206,8 +224,8 @@ export default function App() {
           }
         }
         break;
-      case Levels.Khó:
-        if (operator === Options["Cộng Trừ"]) {
+      case Levels.Hard:
+        if (operator === Options["Plus or minus"]) {
           const tempMath = Math.random() < 0.5 ? "+" : "-";
           const tempNum1 = newNumberFit();
           const tempNum2 = newNumberFit();
@@ -220,7 +238,7 @@ export default function App() {
           }
         }
 
-        if (operator === Options["Nhân Chia"]) {
+        if (operator === Options.Multiplication) {
           const tempMath = Math.random() < 0.5 ? "x" : "÷";
           setMath(tempMath);
           if (tempMath === "x") {
@@ -236,18 +254,19 @@ export default function App() {
           }
         }
 
-        if (operator === Options["Luỹ Thừa"]) {
-          const tempNum1 = newNumberFit();
+        if (operator === Options.Power) {
+          const tempNum1 = newNumberEasy();
           setNum1(tempNum1);
           setNum2(3);
           setMath("^");
           setResult(tempNum1 ** 3);
         }
 
-        if (operator === Options["Tổng Hợp"]) {
+        if (operator === Options.Random) {
           const tempMath = Operators[Math.floor(Math.random() * 5)];
           const tempNum1 = newNumberFit();
           const tempNum2 = newNumberFit();
+          const tempPower = newNumberEasy();
           setMath(tempMath);
 
           switch (tempMath) {
@@ -270,8 +289,8 @@ export default function App() {
               setResult(store.result);
               break;
             case "^":
-              setNumber(tempNum1, 3);
-              setResult(tempNum1 ** 3);
+              setNumber(tempPower, 3);
+              setResult(tempPower ** 3);
               break;
             default:
               break;
@@ -301,34 +320,25 @@ export default function App() {
             }}
           >
             <Button
-              title={Levels[0]}
+              title={Levels.Easy}
               titleStyle={{ color: "#3C7363" }}
               buttonStyle={[styles.button, { width: width * 0.8 }]}
-              onPress={() => {
-                setStep(1);
-                setLevel(Levels.Dễ);
-              }}
+              onPress={() => handleLevel(Levels.Easy)}
             />
             <Button
-              title={Levels[1]}
+              title={Levels.Medium}
               titleStyle={{ color: "#3C7363" }}
               buttonStyle={[
                 styles.button,
                 { width: width * 0.8, marginVertical: 20 },
               ]}
-              onPress={() => {
-                setStep(1);
-                setLevel(Levels.Vừa);
-              }}
+              onPress={() => handleLevel(Levels.Medium)}
             />
             <Button
-              title={Levels[2]}
+              title={Levels.Hard}
               titleStyle={{ color: "#3C7363" }}
               buttonStyle={[styles.button, { width: width * 0.8 }]}
-              onPress={() => {
-                setStep(1);
-                setLevel(Levels.Khó);
-              }}
+              onPress={() => handleLevel(Levels.Hard)}
             />
           </View>
         )}
@@ -345,46 +355,34 @@ export default function App() {
               }}
             >
               <Button
-                title={Options[0]}
+                title={Options["Plus or minus"]}
                 titleStyle={{ color: "#3C7363" }}
                 buttonStyle={[styles.button, { width: width * 0.8 }]}
-                onPress={() => {
-                  setStep(2);
-                  setOperator(Options["Cộng Trừ"]);
-                }}
+                onPress={() => handleOperator(Options["Plus or minus"])}
               />
               <Button
-                title={Options[1]}
+                title={Options.Multiplication}
                 titleStyle={{ color: "#3C7363" }}
                 buttonStyle={[
                   styles.button,
                   { width: width * 0.8, marginVertical: 20 },
                 ]}
-                onPress={() => {
-                  setStep(2);
-                  setOperator(Options["Nhân Chia"]);
-                }}
+                onPress={() => handleOperator(Options.Multiplication)}
               />
               <Button
-                title={Options[2]}
+                title={Options.Power}
                 titleStyle={{ color: "#3C7363" }}
                 buttonStyle={[styles.button, { width: width * 0.8 }]}
-                onPress={() => {
-                  setStep(2);
-                  setOperator(Options["Luỹ Thừa"]);
-                }}
+                onPress={() => handleOperator(Options.Power)}
               />
               <Button
-                title={Options[3]}
+                title={Options.Random}
                 titleStyle={{ color: "#3C7363" }}
                 buttonStyle={[
                   styles.button,
                   { width: width * 0.8, marginTop: 20 },
                 ]}
-                onPress={() => {
-                  setStep(2);
-                  setOperator(Options["Tổng Hợp"]);
-                }}
+                onPress={() => handleOperator(Options.Random)}
               />
             </View>
           </>
@@ -445,6 +443,8 @@ export default function App() {
                   title={"Xóa"}
                   titleStyle={{ color: "#3C7363" }}
                   buttonStyle={[styles.button, { width: width * 0.25 }]}
+                  onPress={() => setResultUser(resultUser.slice(0, -1))}
+                  disabled={resultUser === ""}
                 />
                 <Button
                   title={"0"}
@@ -456,6 +456,7 @@ export default function App() {
                   title={"="}
                   titleStyle={{ color: "#3C7363" }}
                   buttonStyle={[styles.button, { width: width * 0.25 }]}
+                  onPress={handleSubmit}
                 />
               </View>
             </View>

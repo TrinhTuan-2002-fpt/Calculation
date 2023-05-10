@@ -1,21 +1,14 @@
 const Levels = {
-  0: "Dễ",
-  1: "Vừa",
-  2: "Khó",
-  Dễ: 0,
-  Vừa: 1,
-  Khó: 2,
+  Easy: "Dễ",
+  Medium: "Vừa",
+  Hard: "Khó",
 };
 
 const Options = {
-  0: "Cộng Trừ",
-  1: "Nhân Chia",
-  2: "Luỹ Thừa",
-  3: "Tổng Hợp",
-  "Cộng Trừ": 0,
-  "Nhân Chia": 1,
-  "Luỹ Thừa": 2,
-  "Tổng Hợp": 3,
+  "Plus or minus": "Cộng Trừ",
+  Multiplication: "Nhân Chia",
+  Power: "Luỹ Thừa",
+  Random: "Tổng Hợp",
 };
 
 const Operators = ["+", "-", "x", "÷", "^"];
