@@ -1,14 +1,15 @@
-import { Button, Text } from "@rneui/themed";
 import { useEffect, useState } from "react";
 import {
   StyleSheet,
   SafeAreaView,
   StatusBar,
-  View,
   Dimensions,
   ImageBackground,
 } from "react-native";
-import { Levels, Operators, Options } from "./src/constants/data";
+import { LEVELS, OPERATORS, OPTIONS } from "./src/constants/data";
+import { Step1 } from "./src/components/Step1";
+import { Step0 } from "./src/components/Step0";
+import { Step2 } from "./src/components/Step2";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -17,23 +18,47 @@ export default function App() {
   const [level, setLevel] = useState(null);
   const [operator, setOperator] = useState(null);
   const [math, setMath] = useState(null);
+  const [firstNum, setFirstNum] = useState(0);
+  const [secondNum, setSecondNum] = useState(0);
   const [question, setQuestion] = useState(1);
-  const [point, setPoint] = useState(0);
-  const [num1, setNum1] = useState(0);
-  const [num2, setNum2] = useState(0);
-  const [result, setResult] = useState(0);
-  const [resultUser, setResultUser] = useState("");
 
-  const newNumberEasy = () => Math.floor(Math.random() * 18) - 9;
+  const randomUnitsDigit = () => Math.floor(Math.random() * 18) - 9;
 
-  const newNumberFit = () =>
+  const randomTensDigit = () =>
     Math.random() < 0.5
       ? Math.floor(Math.random() * 20) + 10
       : Math.floor(Math.random() * 20) - 30;
 
   const setNumber = (num1, num2) => {
-    setNum1(num1);
-    setNum2(num2);
+    setFirstNum(num1);
+    setSecondNum(num2);
+  };
+
+  const randomValueFromArray = (values) => {
+    const keys = Object.keys(values);
+    const randomKey = keys[Math.floor(Math.random() * keys.length)];
+    return values[randomKey];
+  };
+
+  const findModulos = (number) => {
+    const absNum = Math.abs(number);
+
+    if (absNum === 1 || absNum === 0) {
+      return [1];
+    }
+
+    const modulos = [];
+    for (let i = 2; i <= absNum; i++) {
+      if (number % i === 0) {
+        modulos.push(i);
+      }
+    }
+
+    return modulos.reduce((acc, curr, idx) => {
+      acc.push(...[-curr, curr]);
+
+      return acc;
+    }, []);
   };
 
   const handleLevel = (level) => {
@@ -46,421 +71,214 @@ export default function App() {
     setOperator(option);
   };
 
-  const getRandomDivision = () => {
-    if (level === Levels.Easy) {
-      const tempNum1 = newNumberEasy();
-      const tempNum2 =
-        Math.random() < 0.5
-          ? Math.floor(Math.random() * 8) + 1
-          : Math.floor(Math.random() * 9) - 10;
-      const result = Math.floor(tempNum1 / tempNum2);
-      return { tempNum1, tempNum2, result };
-    }
-
-    if (level === Levels.Medium) {
-      const tempNum1 = newNumberEasy();
-      const tempNum2 =
-        Math.random() < 0.5
-          ? Math.floor(Math.random() * 20) + 10
-          : Math.floor(Math.random() * 20) - 30;
-      const result = Math.floor(tempNum1 / tempNum2);
-      return { tempNum1, tempNum2, result };
-    }
-  };
-
-  const handleSubmit = () => {
-    if (result === Number(resultUser)) {
-      setQuestion(question + 1);
-      setPoint(point + 1);
-    }
+  const reset = () => {
+    setStep(1);
+    setResultUser("");
   };
 
   useEffect(() => {
+    StatusBar.setHidden(true);
+  }, []);
+
+  const randomCalculation = (level) => {
+    const operator = randomValueFromArray(OPERATORS);
+    setMath(operator);
+    let firstNumber, secondNumber;
+
+    if (operator === OPERATORS.logarit) {
+      switch (level) {
+        case LEVELS.Easy:
+          firstNumber = randomUnitsDigit();
+          secondNumber = 2;
+          break;
+        case LEVELS.Math:
+          firstNumber = randomTensDigit();
+          secondNumber = 2;
+          break;
+        case LEVELS.Hard:
+          firstNumber = randomUnitsDigit();
+          secondNumber = 3;
+          break;
+
+        default:
+          break;
+      }
+    } else if (operator === OPERATORS.divide) {
+      const calculation = findDive();
+      firstNumber = calculation.firstNumber;
+      secondNumber = calculation.secondNumber;
+    } else {
+      switch (level) {
+        case LEVELS.Easy:
+          firstNumber = randomUnitsDigit();
+          secondNumber = randomUnitsDigit();
+          break;
+        case LEVELS.Medium:
+          firstNumber = randomTensDigit();
+          secondNumber = randomUnitsDigit();
+          break;
+        case LEVELS.Hard:
+          firstNumber = randomTensDigit();
+          secondNumber = randomTensDigit();
+          break;
+
+        default:
+          break;
+      }
+    }
+
+    setNumber(firstNumber, secondNumber);
+
+    return {
+      firstNumber,
+      secondNumber,
+      operator,
+    };
+  };
+
+  const findDive = () => {
+    let modulos, firstNumber, secondNumber;
+
     switch (level) {
-      case Levels.Easy:
-        if (operator === Options["Plus or minus"]) {
-          const tempMath = Math.random() < 0.5 ? "+" : "-";
-          const tempNum1 = newNumberEasy();
-          const tempNum2 = newNumberEasy();
-          setNumber(tempNum1, tempNum2);
-          setMath(tempMath);
-          if (tempMath === "+") {
-            setResult(tempNum1 + tempNum2);
-          } else {
-            setResult(tempNum1 - tempNum2);
-          }
+      case LEVELS.Easy:
+        firstNumber = randomUnitsDigit();
+        modulos = findModulos(firstNumber);
+        secondNumber = randomValueFromArray(modulos);
+
+        while (Math.abs(secondNumber) >= 10) {
+          secondNumber = randomValueFromArray(modulos);
         }
+        break;
 
-        if (operator === Options.Multiplication) {
-          const tempMath = Math.random() < 0.5 ? "x" : "÷";
-          setMath(tempMath);
-          if (tempMath === "x") {
-            const tempNum1 = newNumberEasy();
-            const tempNum2 = newNumberEasy();
-            setNumber(tempNum1, tempNum2);
-            setResult(tempNum1 * tempNum2);
-          } else {
-            const store = getRandomDivision();
-            setNum1(store.tempNum1);
-            setNum2(store.tempNum2);
-            setResult(store.result);
-          }
+      case LEVELS.Medium:
+        firstNumber = randomTensDigit();
+        modulos = findModulos(firstNumber);
+        secondNumber = randomValueFromArray(modulos);
+        break;
+
+      case LEVELS.Hard:
+        firstNumber = randomTensDigit();
+        modulos = findModulos(firstNumber);
+        secondNumber = randomValueFromArray(modulos);
+
+        while (Math.abs(secondNumber) < 10) {
+          secondNumber = randomValueFromArray(modulos);
         }
+        break;
 
-        if (operator === Options.Power) {
-          const tempNum1 =
-            Math.random() < 0.5
-              ? Math.floor(Math.random() * 8) + 1
-              : Math.floor(Math.random() * 9) - 10;
-          setNum1(tempNum1);
-          setNum2(2);
-          setMath("^");
-          setResult(tempNum1 ** 2);
+      default:
+        break;
+    }
+    return { firstNumber, secondNumber };
+  };
+
+  useEffect(() => {
+    let firstNumber, secondNumber;
+
+    switch (operator) {
+      case OPTIONS["Plus or minus"]:
+        const mathPoM = Math.random() < 0.5 ? OPERATORS.plus : OPERATORS.minus;
+        setMath(mathPoM);
+        switch (level) {
+          case LEVELS.Easy:
+            firstNumber = randomUnitsDigit();
+            secondNumber = randomUnitsDigit;
+            setNumber(firstNumber, secondNumber);
+            break;
+          case LEVELS.Medium:
+            firstNumber = randomTensDigit();
+            secondNumber = randomUnitsDigit;
+            setNumber(firstNumber, secondNumber);
+            break;
+          case LEVELS.Hard:
+            firstNumber = randomTensDigit();
+            secondNumber = randomTensDigit;
+            setNumber(firstNumber, secondNumber);
+            break;
+          default:
+            break;
         }
+        break;
+      case OPTIONS.Multiplication:
+        const mathMulti =
+          Math.random() < 0.5 ? OPERATORS.multiply : OPERATORS.divide;
+        setMath(mathMulti);
 
-        if (operator === Options.Random) {
-          const tempMath = Operators[Math.floor(Math.random() * 5)];
-          const tempNum1 = newNumberEasy();
-          const tempNum2 = newNumberEasy();
-          setMath(tempMath);
-
-          switch (tempMath) {
-            case "+":
-              setNumber(tempNum1, tempNum2);
-              setResult(tempNum1 + tempNum2);
+        if (mathMulti === OPERATORS.divide) {
+          const calculation = findDive();
+          setNumber(calculation.firstNumber, calculation.secondNumber);
+        } else {
+          switch (level) {
+            case LEVELS.Easy:
+              firstNumber = randomUnitsDigit();
+              secondNumber = randomUnitsDigit();
+              setNumber(firstNumber, secondNumber);
               break;
-            case "-":
-              setNumber(tempNum1, tempNum2);
-              setResult(tempNum1 - tempNum2);
+            case LEVELS.Medium:
+              firstNumber = randomTensDigit();
+              secondNumber = randomUnitsDigit();
+              setNumber(firstNumber, secondNumber);
               break;
-            case "x":
-              setNumber(tempNum1, tempNum2);
-              setResult(tempNum1 * tempNum2);
-              break;
-            case "÷":
-              const store = getRandomDivision();
-              setNum1(store.tempNum1);
-              setNum2(store.tempNum2);
-              setResult(store.result);
-              break;
-            case "^":
-              setNumber(tempNum1, 2);
-              setResult(tempNum1 ** 2);
+            case LEVELS.Hard:
+              firstNumber = randomTensDigit();
+              secondNumber = randomTensDigit();
+              setNumber(firstNumber, secondNumber);
               break;
             default:
               break;
           }
         }
         break;
-      case Levels.Medium:
-        if (operator === Options["Plus or minus"]) {
-          const tempMath = Math.random() < 0.5 ? "+" : "-";
-          const tempNum1 = newNumberFit();
-          const tempNum2 = newNumberEasy();
-          setNumber(tempNum1, tempNum2);
-          setMath(tempMath);
-          if (tempMath === "+") {
-            setResult(tempNum1 + tempNum2);
-          } else {
-            setResult(tempNum1 - tempNum2);
-          }
-        }
-
-        if (operator === Options.Multiplication) {
-          const tempMath = Math.random() < 0.5 ? "x" : "÷";
-          setMath(tempMath);
-          if (tempMath === "x") {
-            const tempNum1 = newNumberFit();
-            const tempNum2 = newNumberEasy();
-            setNumber(tempNum1, tempNum2);
-            setResult(tempNum1 * tempNum2);
-          } else {
-            const store = getRandomDivision();
-            setNum1(store.tempNum1);
-            setNum2(store.tempNum2);
-            setResult(store.result);
-          }
-        }
-
-        if (operator === Options.Power) {
-          const tempNum1 = newNumberFit();
-          setNum1(tempNum1);
-          setNum2(2);
-          setMath("^");
-          setResult(tempNum1 ** 2);
-        }
-
-        if (operator === Options.Random) {
-          const tempMath = Operators[Math.floor(Math.random() * 5)];
-          const tempNum1 = newNumberFit();
-          const tempNum2 = newNumberEasy();
-          setMath(tempMath);
-
-          switch (tempMath) {
-            case "+":
-              setNumber(tempNum1, tempNum2);
-              setResult(tempNum1 + tempNum2);
-              break;
-            case "-":
-              setNumber(tempNum1, tempNum2);
-              setResult(tempNum1 - tempNum2);
-              break;
-            case "x":
-              setNumber(tempNum1, tempNum2);
-              setResult(tempNum1 * tempNum2);
-              break;
-            case "÷":
-              const store = getRandomDivision();
-              setNum1(store.tempNum1);
-              setNum2(store.tempNum2);
-              setResult(store.result);
-              break;
-            case "^":
-              setNumber(tempNum1, 2);
-              setResult(tempNum1 ** 2);
-              break;
-            default:
-              break;
-          }
+      case OPTIONS.Power:
+        setMath("^");
+        switch (level) {
+          case LEVELS.Easy:
+            firstNumber = randomUnitsDigit();
+            secondNumber = 2;
+            setNumber(firstNumber, secondNumber);
+            break;
+          case LEVELS.Medium:
+            firstNumber = randomTensDigit();
+            secondNumber = 2;
+            setNumber(firstNumber, secondNumber);
+            break;
+          case LEVELS.Hard:
+            firstNumber = randomUnitsDigit();
+            secondNumber = 3;
+            setNumber(firstNumber, secondNumber);
+            break;
+          default:
+            break;
         }
         break;
-      case Levels.Hard:
-        if (operator === Options["Plus or minus"]) {
-          const tempMath = Math.random() < 0.5 ? "+" : "-";
-          const tempNum1 = newNumberFit();
-          const tempNum2 = newNumberFit();
-          setNumber(tempNum1, tempNum2);
-          setMath(tempMath);
-          if (tempMath === "+") {
-            setResult(tempNum1 + tempNum2);
-          } else {
-            setResult(tempNum1 - tempNum2);
-          }
-        }
-
-        if (operator === Options.Multiplication) {
-          const tempMath = Math.random() < 0.5 ? "x" : "÷";
-          setMath(tempMath);
-          if (tempMath === "x") {
-            const tempNum1 = newNumberFit();
-            const tempNum2 = newNumberFit();
-            setNumber(tempNum1, tempNum2);
-            setResult(tempNum1 * tempNum2);
-          } else {
-            const store = getRandomDivision();
-            setNum1(store.tempNum1);
-            setNum2(store.tempNum2);
-            setResult(store.result);
-          }
-        }
-
-        if (operator === Options.Power) {
-          const tempNum1 = newNumberEasy();
-          setNum1(tempNum1);
-          setNum2(3);
-          setMath("^");
-          setResult(tempNum1 ** 3);
-        }
-
-        if (operator === Options.Random) {
-          const tempMath = Operators[Math.floor(Math.random() * 5)];
-          const tempNum1 = newNumberFit();
-          const tempNum2 = newNumberFit();
-          const tempPower = newNumberEasy();
-          setMath(tempMath);
-
-          switch (tempMath) {
-            case "+":
-              setNumber(tempNum1, tempNum2);
-              setResult(tempNum1 + tempNum2);
-              break;
-            case "-":
-              setNumber(tempNum1, tempNum2);
-              setResult(tempNum1 - tempNum2);
-              break;
-            case "x":
-              setNumber(tempNum1, tempNum2);
-              setResult(tempNum1 * tempNum2);
-              break;
-            case "÷":
-              const store = getRandomDivision();
-              setNum1(store.tempNum1);
-              setNum2(store.tempNum2);
-              setResult(store.result);
-              break;
-            case "^":
-              setNumber(tempPower, 3);
-              setResult(tempPower ** 3);
-              break;
-            default:
-              break;
-          }
-        }
+      case OPTIONS.Random:
+        randomCalculation(level);
         break;
       default:
         break;
     }
-  }, [step === 2, question]);
+  }, [step == 2, question]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container]}>
       <ImageBackground
         source={require("./assets/bg.jpg")}
         resizeMode="cover"
         style={{ width, height }}
       >
-        <StatusBar barStyle={"dark-content"} />
-        {step === 0 && (
-          <View
-            style={{
-              flexDirection: "column",
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Button
-              title={Levels.Easy}
-              titleStyle={{ color: "#3C7363" }}
-              buttonStyle={[styles.button, { width: width * 0.8 }]}
-              onPress={() => handleLevel(Levels.Easy)}
-            />
-            <Button
-              title={Levels.Medium}
-              titleStyle={{ color: "#3C7363" }}
-              buttonStyle={[
-                styles.button,
-                { width: width * 0.8, marginVertical: 20 },
-              ]}
-              onPress={() => handleLevel(Levels.Medium)}
-            />
-            <Button
-              title={Levels.Hard}
-              titleStyle={{ color: "#3C7363" }}
-              buttonStyle={[styles.button, { width: width * 0.8 }]}
-              onPress={() => handleLevel(Levels.Hard)}
-            />
-          </View>
-        )}
-        {/* style={{ color: "#FFFF" }}  */}
+        {step === 0 && <Step0 handleLevel={handleLevel} />}
         {step === 1 && (
-          <>
-            <Text onPress={() => setStep(0)}>{"< Chọn mức độ"}</Text>
-            <View
-              style={{
-                flexDirection: "column",
-                flex: 1,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Button
-                title={Options["Plus or minus"]}
-                titleStyle={{ color: "#3C7363" }}
-                buttonStyle={[styles.button, { width: width * 0.8 }]}
-                onPress={() => handleOperator(Options["Plus or minus"])}
-              />
-              <Button
-                title={Options.Multiplication}
-                titleStyle={{ color: "#3C7363" }}
-                buttonStyle={[
-                  styles.button,
-                  { width: width * 0.8, marginVertical: 20 },
-                ]}
-                onPress={() => handleOperator(Options.Multiplication)}
-              />
-              <Button
-                title={Options.Power}
-                titleStyle={{ color: "#3C7363" }}
-                buttonStyle={[styles.button, { width: width * 0.8 }]}
-                onPress={() => handleOperator(Options.Power)}
-              />
-              <Button
-                title={Options.Random}
-                titleStyle={{ color: "#3C7363" }}
-                buttonStyle={[
-                  styles.button,
-                  { width: width * 0.8, marginTop: 20 },
-                ]}
-                onPress={() => handleOperator(Options.Random)}
-              />
-            </View>
-          </>
+          <Step1 setStep={() => setStep(0)} handleOperator={handleOperator} />
         )}
         {step === 2 && (
-          <>
-            <Text onPress={() => setStep(0)}>Kết thúc </Text>
-            <View style={{ flex: 1, alignItems: "center" }}>
-              <View
-                style={{
-                  paddingVertical: 50,
-                  width: width * 0.8,
-                  alignItems: "center",
-                }}
-              >
-                <Text>{`${num1 < 0 ? `(${num1})` : num1} ${math} ${
-                  num2 < 0 ? `(${num2})` : num2
-                } = ${resultUser}`}</Text>
-              </View>
-              <View style={{ flexDirection: "row" }}>
-                {["7", "8", "9"].map((v, i) => (
-                  <Button
-                    title={v}
-                    key={i}
-                    titleStyle={{ color: "#3C7363" }}
-                    buttonStyle={[styles.button, { width: width * 0.25 }]}
-                    onPress={() => setResultUser(resultUser + v)}
-                  />
-                ))}
-              </View>
-              <View style={{ flexDirection: "row" }}>
-                {["4", "5", "6"].map((v, i) => (
-                  <Button
-                    title={v}
-                    key={i}
-                    titleStyle={{ color: "#3C7363" }}
-                    buttonStyle={[styles.button, { width: width * 0.25 }]}
-                    onPress={() => setResultUser(resultUser + v)}
-                  />
-                ))}
-              </View>
-              <View style={{ flexDirection: "row" }}>
-                {["1", "2", "3"].map((v, i) => (
-                  <Button
-                    title={v}
-                    key={i}
-                    titleStyle={{ color: "#3C7363" }}
-                    buttonStyle={[styles.button, { width: width * 0.25 }]}
-                    onPress={() => setResultUser(resultUser + v)}
-                  />
-                ))}
-              </View>
-              <View style={{ flexDirection: "row" }}>
-                {/* {["Xoa", "0", "="].map((v, i) => (
-                  
-                ))} */}
-                <Button
-                  title={"Xóa"}
-                  titleStyle={{ color: "#3C7363" }}
-                  buttonStyle={[styles.button, { width: width * 0.25 }]}
-                  onPress={() => setResultUser(resultUser.slice(0, -1))}
-                  disabled={resultUser === ""}
-                />
-                <Button
-                  title={"0"}
-                  titleStyle={{ color: "#3C7363" }}
-                  buttonStyle={[styles.button, { width: width * 0.25 }]}
-                  onPress={() => setResultUser(resultUser + 0)}
-                />
-                <Button
-                  title={"="}
-                  titleStyle={{ color: "#3C7363" }}
-                  buttonStyle={[styles.button, { width: width * 0.25 }]}
-                  onPress={handleSubmit}
-                />
-              </View>
-            </View>
-          </>
+          <Step2
+            reset={reset}
+            num1={firstNum}
+            num2={secondNum}
+            math={math}
+            question={question}
+            setQuestion={setQuestion}
+          />
         )}
       </ImageBackground>
     </SafeAreaView>

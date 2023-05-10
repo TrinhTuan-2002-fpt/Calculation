@@ -1,16 +1,22 @@
-const Levels = {
-  Easy: "Dễ",
-  Medium: "Vừa",
-  Hard: "Khó",
+const LEVELS = {
+  Easy: "Mức Dễ",
+  Medium: "Mức Vừa",
+  Hard: "Mức Khó",
 };
 
-const Options = {
+const OPTIONS = {
   "Plus or minus": "Cộng Trừ",
   Multiplication: "Nhân Chia",
   Power: "Luỹ Thừa",
   Random: "Tổng Hợp",
 };
 
-const Operators = ["+", "-", "x", "÷", "^"];
+const OPERATORS = {
+  plus: "+",
+  minus: "-",
+  divide: "÷",
+  multiply: "*",
+  logarit: "^",
+};
 
-export { Levels, Operators, Options };
+export { LEVELS, OPERATORS, OPTIONS };
