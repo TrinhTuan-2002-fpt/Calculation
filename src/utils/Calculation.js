@@ -1,4 +1,4 @@
-import { OPERATORS, LEVELS } from "../constants/app";
+import { OPERATORS, LEVELS } from "../constants/data";
 
 export const randomFromRange = (min, max) =>
   Math.floor(Math.random() * (max - min + 1) + min);
@@ -41,15 +41,15 @@ export const randomCalculation = (level, operators) => {
 
   if (operator.value === OPERATORS.logarit.value) {
     switch (level) {
-      case LEVELS.easy:
+      case LEVELS.Easy:
         firstNumber = randomUnitsDigit();
         secondNumber = 2;
         break;
-      case LEVELS.medium:
+      case LEVELS.Medium:
         firstNumber = randomTensDigit();
         secondNumber = 2;
         break;
-      case LEVELS.hard:
+      case LEVELS.Hard:
         firstNumber = randomUnitsDigit();
         secondNumber = 3;
         break;
@@ -61,7 +61,7 @@ export const randomCalculation = (level, operators) => {
     let modulos;
 
     switch (level) {
-      case LEVELS.easy:
+      case LEVELS.Easy:
         firstNumber = randomUnitsDigit();
         modulos = findModulos(firstNumber);
         secondNumber = randomValueFromArray(modulos);
@@ -71,13 +71,13 @@ export const randomCalculation = (level, operators) => {
         }
         break;
 
-      case LEVELS.medium:
+      case LEVELS.Medium:
         firstNumber = randomTensDigit();
         modulos = findModulos(firstNumber);
         secondNumber = randomValueFromArray(modulos);
         break;
 
-      case LEVELS.hard:
+      case LEVELS.Hard:
         firstNumber = randomTensDigit();
         modulos = findModulos(firstNumber);
         secondNumber = randomValueFromArray(modulos);
@@ -92,15 +92,15 @@ export const randomCalculation = (level, operators) => {
     }
   } else {
     switch (level) {
-      case LEVELS.easy:
+      case LEVELS.Easy:
         firstNumber = randomUnitsDigit();
         secondNumber = randomUnitsDigit();
         break;
-      case LEVELS.medium:
+      case LEVELS.Medium:
         firstNumber = randomTensDigit();
         secondNumber = randomUnitsDigit();
         break;
-      case LEVELS.hard:
+      case LEVELS.Hard:
         firstNumber = randomTensDigit();
         secondNumber = randomTensDigit();
         break;
