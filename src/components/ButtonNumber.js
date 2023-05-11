@@ -1,5 +1,4 @@
 import { Dimensions, StyleSheet, Text, View } from "react-native";
-import { TextStyle } from "../styles";
 import { Button } from "@rneui/themed";
 
 const { width } = Dimensions.get("screen");
@@ -12,10 +11,10 @@ export function ButtonNumber({ value, setResultUser, resultUser }) {
           <Button
             title={v}
             key={i}
-            titleStyle={{ color: "#3C7363" }}
+            titleStyle={{ color: "#3C7363", fontSize: 20 }}
             buttonStyle={[
               styles.button,
-              { marginHorizontal: i === 1 ? 10 : 0, marginVertical: 10 },
+              { marginHorizontal: i === 1 ? 10 : 0, marginVertical: 5 },
             ]}
             onPress={() => setResultUser(resultUser + v)}
           />

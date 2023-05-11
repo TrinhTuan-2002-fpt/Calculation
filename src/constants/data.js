@@ -6,7 +6,7 @@ const LEVELS = {
 
 const OPTIONS = {
   "Plus or minus": "Cộng Trừ",
-  Multiplication: "Nhân Chia",
+  "Multiply or divide": "Nhân Chia",
   Power: "Luỹ Thừa",
   Random: "Tổng Hợp",
 };

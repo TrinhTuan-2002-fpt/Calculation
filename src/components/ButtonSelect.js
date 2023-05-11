@@ -8,7 +8,7 @@ export function ButtonSelect({ onPress = () => {}, title, style }) {
   return (
     <Button
       title={title}
-      titleStyle={[TextStyle.label, { color: "#3C7363" }]}
+      titleStyle={[TextStyle.text, { color: "#3C7363" }]}
       buttonStyle={[styles.button, style]}
       onPress={onPress}
     />

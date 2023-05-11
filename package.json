@@ -5,7 +5,8 @@
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build:released": "cd android && ./gradlew assembleRelease && cd -"
   },
   "dependencies": {
     "@rneui/base": "^4.0.0-rc.7",
