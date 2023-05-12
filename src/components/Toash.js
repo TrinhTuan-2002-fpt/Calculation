@@ -1,5 +1,8 @@
 import { Button, StyleSheet, Text, View } from "react-native";
 import Modal from "react-native-modal";
+import { getWH } from "../hook/getWH";
+
+const { width } = getWH();
 
 const ModalAnswerWrong = ({ onPress, isVisible }) => {
   return (
@@ -14,13 +17,7 @@ const ModalAnswerWrong = ({ onPress, isVisible }) => {
       backdropTransitionOutTiming={600}
     >
       <View style={styles.content}>
-        {/* <Text style={styles.contentTitle}>
-          {point < 5
-            ? "Bạn Cần cố gắng hơn"
-            : point < 8
-            ? "Bạn đang làm rất rốt"
-            : "Bạn làm rất tốt"}
-        </Text> */}
+        <Text style={styles.contentTitle}>ban chua nhap dap an</Text>
         <Button testID={"close-button"} onPress={onPress} title="Close" />
       </View>
     </Modal>
@@ -30,10 +27,11 @@ const ModalAnswerWrong = ({ onPress, isVisible }) => {
 const styles = StyleSheet.create({
   content: {
     backgroundColor: "white",
-    padding: 22,
+    width: width * 0.5,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 4,
+    alignSelf: "center",
     borderColor: "rgba(0, 0, 0, 0.1)",
   },
   contentTitle: {

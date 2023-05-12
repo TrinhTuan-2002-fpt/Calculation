@@ -1,8 +1,7 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import { ButtonSelect } from "./ButtonSelect";
 import { LEVELS } from "../constants/data";
 import { TextStyle } from "../styles";
-import { Text } from "@rneui/themed";
 
 export function Step0({ handleLevel }) {
   return (
@@ -12,7 +11,7 @@ export function Step0({ handleLevel }) {
           Phép Tính IQ
         </Text>
       </View>
-      <View style={{ flex: 2, alignItems: "center" }}>
+      <View style={{ flex: 1, alignItems: "center" }}>
         <ButtonSelect
           title={LEVELS.Easy}
           onPress={() => handleLevel(LEVELS.Easy)}

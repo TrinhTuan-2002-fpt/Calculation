@@ -14,8 +14,8 @@ const OPTIONS = {
 const OPERATORS = {
   plus: "+",
   minus: "-",
-  divide: "÷",
-  multiply: "*",
+  divide: ":",
+  multiply: ".",
   logarit: "^",
 };
 

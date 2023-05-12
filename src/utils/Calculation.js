@@ -39,7 +39,7 @@ export const randomCalculation = (level, operators) => {
   const operator = randomValueFromArray(operators);
   let firstNumber, secondNumber;
 
-  if (operator.value === OPERATORS.logarit.value) {
+  if (operator === OPERATORS.logarit) {
     switch (level) {
       case LEVELS.Easy:
         firstNumber = randomUnitsDigit();
@@ -57,7 +57,7 @@ export const randomCalculation = (level, operators) => {
       default:
         break;
     }
-  } else if (operator.value === OPERATORS.divide.value) {
+  } else if (operator === OPERATORS.divide) {
     let modulos;
 
     switch (level) {
@@ -108,10 +108,6 @@ export const randomCalculation = (level, operators) => {
       default:
         break;
     }
-  }
-
-  if (secondNumber < 0) {
-    secondNumber = `(${secondNumber})`;
   }
 
   return {

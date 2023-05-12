@@ -43,7 +43,11 @@ export default function App() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ImageBackground
-        source={require("./assets/bg.jpg")}
+        source={
+          step === 2
+            ? require("./assets/bgPlay.jpg")
+            : require("./assets/bgStart.jpg")
+        }
         resizeMode="cover"
         style={{ width, height }}
       >

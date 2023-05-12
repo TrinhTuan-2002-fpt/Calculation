@@ -91,19 +91,25 @@ export function Step2({
 
   const handleSubmit = () => {
     const result = calculateFromCalculationObject();
+
+    if (resultUser === "") {
+      return setIsAnswerWrong(true);
+    }
+
     if (result === Number(resultUser)) {
-      if (question === 10) {
-        setStep(3);
-      }
       setQuestion((per) => per + 1);
       setCorrect((per) => per + 1);
-      setPoint((per) => per + 1);
+      setPoint((per) => (per === 10 ? per : per + 1));
       setResultUser("");
       setAnswer(2);
+      // AudioManager(require('../../assets/audios/dung.mp3'));
+      if (question === 10) {
+        return setStep(3);
+      }
     } else {
       if (answer === 1) {
         setQuestion((per) => per + 1);
-        setPoint((per) => per - 0.5);
+        setPoint((per) => (per === 0 ? per : per - 0.5));
         setResultUser("");
         setAnswer(2);
         if (question === 10) {
@@ -116,22 +122,6 @@ export function Step2({
     }
   };
 
-  // const [progress, setProgress] = useState(0);
-
-  // useEffect(() => {
-  //   let subs = true;
-  //   if (progress < 16 && progress !== 0) {
-  //     setTimeout(() => {
-  //       if (subs) {
-  //         setProgress(progress + 1);
-  //       }
-  //     }, 1000);
-  //   }
-  //   return () => {
-  //     subs = false;
-  //   };
-  // }, [progress]);
-
   return (
     <View style={{ alignSelf: "center" }}>
       <View style={[styles.header]}>
@@ -142,7 +132,7 @@ export function Step2({
           />
         </TouchableOpacity>
         <Text style={[TextStyle.label]}>Bài học {question}/10</Text>
-        <Button onPress={() => setIsAnswerWrong(true)}>test</Button>
+        <Text></Text>
       </View>
       <View style={styles.progress}>
         {/* <LinearProgress
@@ -170,11 +160,24 @@ export function Step2({
             flexDirection: "row",
           }}
         >
-          <Text style={{ fontSize: 42, color: "#3C7363" }}>{`${
-            firstNum < 0 ? `(${firstNum})` : firstNum
-          } ${math} ${secondNum < 0 ? `(${secondNum})` : secondNum} = ${
-            resultUser === "" ? ". . . " : resultUser
-          }`}</Text>
+          {math === OPERATORS.logarit ? (
+            <>
+              <View style={{ flexDirection: "row" }}>
+                <Text style={styles.text}>{`${firstNum}   = ${
+                  resultUser === "" ? ". . . " : resultUser
+                }`}</Text>
+                <Text style={[styles.hat, { left: firstNum < 0 ? 28 : 23 }]}>
+                  {secondNum}
+                </Text>
+              </View>
+            </>
+          ) : (
+            <Text style={styles.text}>{`${
+              firstNum < 0 ? `(${firstNum})` : firstNum
+            } ${math} ${secondNum < 0 ? `(${secondNum})` : secondNum} = ${
+              resultUser === "" ? ". . . " : resultUser
+            }`}</Text>
+          )}
           <TouchableOpacity
             style={{ marginLeft: 5 }}
             onPress={() => setResultUser(resultUser.slice(0, -1))}
@@ -266,4 +269,11 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 10,
   },
+  hat: {
+    position: "absolute",
+    top: -20,
+    fontSize: 32,
+    color: "#3C7363",
+  },
+  text: { fontSize: 42, color: "#3C7363" },
 });
